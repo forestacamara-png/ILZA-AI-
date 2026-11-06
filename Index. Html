@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ILZA AI Pro</title>
+<style>
+body {
+  margin: 0;
+  background: #080d12;
+  color: white;
+  font-family: Arial, sans-serif;
+  text-align: center;
+}
+header {
+  padding: 25px;
+  color: #00ff99;
+  font-size: 30px;
+  font-weight: bold;
+}
+main { padding: 20px; }
+.face {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  border: 3px solid #00ff99;
+  margin: 25px auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 65px;
+}
+#chat {
+  background: #111c25;
+  border-radius: 15px;
+  padding: 15px;
+  min-height: 180px;
+  text-align: left;
+}
+input {
+  width: 85%;
+  padding: 15px;
+  margin-top: 15px;
+  border-radius: 10px;
+  border: 1px solid #00ff99;
+}
+button {
+  padding: 14px 25px;
+  margin: 10px;
+  background: #00cc77;
+  border: none;
+  border-radius: 10px;
+  font-weight: bold;
+}
+</style>
+</head>
+<body>
+<header>🇲🇱 ILZA AI PRO</header>
+<main>
+<div class="face">🤖</div>
+<h2>Bonjour, je suis ILZA</h2>
+<p>Ton intelligence artificielle personnelle.</p>
+<div id="chat">
+<p>ILZA : Bonjour ! Comment puis-je t'aider ?</p>
+</div>
+<input id="question" placeholder="Écris ton message ici...">
+<br>
+<button onclick="envoyer()">Envoyer</button>
+</main>
+<script>
+async function envoyer() {
+ const champ = document.getElementById("question");
+ const chat = document.getElementById("chat");
+ const question = champ.value.trim();
+ if (!question) return;
+
+ chat.innerHTML += "<p>Toi : " +
+  question.replace(/</g,"&lt;").replace(/>/g,"&gt;") +
+  "</p>";
+ champ.value = "";
+
+ const attente = document.createElement("p");
+ attente.textContent = "ILZA : Je réfléchis...";
+ chat.appendChild(attente);
+
+ try {
+  const reponse = await fetch("/api/chat", {
+   method: "POST",
+   headers: {"Content-Type":"application/json"},
+   body: JSON.stringify({message:question})
+  });
+  if (!reponse.ok) throw new Error("Serveur indisponible");
+  const data = await reponse.json();
+  attente.textContent = "ILZA : " + data.reply;
+ } catch(e) {
+  attente.textContent =
+   "ILZA : Mon intelligence artificielle est en cours de connexion.";
+ }
+}
+</script>
+</body>
+
+</html>
